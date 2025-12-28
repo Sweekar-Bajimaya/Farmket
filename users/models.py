@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.core.validators import RegexValidator
 from django.utils import timezone
-from .constants import (
+from common.constants import (
     USER_TYPE_CHOICES,
     USER_TYPE_BUYER,
     USER_TYPE_SELLER,
