@@ -28,7 +28,7 @@ class CategoryAdmin(admin.ModelAdmin):
     
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'seller__seller_profile__business_name', 'final_price', 'stock_quantity', 'status', 'is_featured', 'created_at')
+    list_display = ('name', 'seller_business_name', 'final_price', 'stock_quantity', 'status', 'is_featured', 'created_at')
     list_filter = ('category', 'status', 'is_featured', 'created_at')
     search_fields = ('name', 'slug', 'sku', 'seller__email', 'seller__seller_profile__business_name')
     ordering = ('-created_at',)
@@ -36,7 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
     
     fieldsets = (
-        ('Seller',{
+        ('Seller', {
             'fields': ('seller',)
         }),
         ('Product Info', {
@@ -47,13 +47,27 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         ('Status', {
             'fields': ('status', 'is_featured')
-        })
+        }),
+        ('Pricing', {
+            'fields': ('price', 'discount_price')
+        }),
     )
     
+    def seller_business_name(self, obj):
+        if hasattr(obj.seller, 'seller_profile'):
+            return obj.seller.business_name
+        return obj.seller.business_name
+    
+    seller_business_name.short_description = 'Seller Business Name'
+    seller_business_name.admin_order_field = 'seller__seller_profile__business_name'  
+      
     def final_price(self, obj):
         return f"${obj.final_price}" 
     final_price.short_description = 'Price'
     final_price.admin_order_field = 'price'
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request)
     
     
 @admin.register(ProductImage)

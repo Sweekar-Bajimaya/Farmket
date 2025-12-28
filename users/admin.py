@@ -64,6 +64,9 @@ class SellerProfileAdmin(admin.ModelAdmin):
         ('Verification', {
             'fields': ('is_verified_seller', 'verification_date')
         }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
+        }),
     )
     
     readonly_fields = ['created_at', 'updated_at']
@@ -91,6 +94,9 @@ class BuyerProfileAdmin(admin.ModelAdmin):
         }),
         ('Metrics', {
             'fields': ('total_orders', 'total_spent', 'loyalty_points')
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at')
         }),
     )
     

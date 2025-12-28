@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.core.validators import MinValueValidator, MaxValueValidator
-from users.models import User
+from users.models import SellerProfile, User
 from common.constants import (
     MAX_PRICE_DIGITS,
     PRODUCT_STATUS_CHOICES,
@@ -63,23 +63,21 @@ class Product(models.Model):
     Product model representing fruits and vegetables.
     """
     seller = models.ForeignKey(
-        User,
+        SellerProfile,
         on_delete=models.CASCADE,
         related_name='products',
-        limit_choices_to={'user_type': 'seller'}
     )
     
     name = models.CharField(max_length=MAX_PRODUCT_NAME_LENGTH, db_index=True)
     slug = models.SlugField(max_length=MAX_SLUG_LENGTH, unique=True, blank=True)
-    sku = models.CharField(max_length=MAX_SKU_LENGTH, unique=True, db_index=True)
     category = models.ForeignKey(
         Category,
-        on_delete=models.SET_NULL,
-        null=True,
+        on_delete=models.CASCADE,
+        null=False,
         related_name='products'
     )
     price = models.DecimalField(max_digits=MAX_PRICE_DIGITS, decimal_places=MAX_DECIMAL_PLACES, validators=[MinValueValidator(0)])
-    dicount_price = models.DecimalField(
+    discount_price = models.DecimalField(
         max_digits=MAX_PRICE_DIGITS,
         decimal_places=MAX_DECIMAL_PLACES,
         validators=[MinValueValidator(0)],
@@ -121,28 +119,35 @@ class Product(models.Model):
         ]   
     
     def __str__(self):
-        return f"{self.name} - {self.seller.seller_profile.business_name}"
+        return f"{self.name} - {self.seller.business_name}"
     
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.name)
             slug = base_slug
-            while Product.objects.filter(slug=slug).exists():
+            counter = 1
+            slug_conflict_qs = Product.objects.filter(slug=slug)
+            if self.pk:
+                slug_conflict_qs = slug_conflict_qs.exclude(pk=self.pk)
+            while slug_conflict_qs.exists():
                 slug = f"{base_slug}-{counter}"
                 counter += 1
+                slug_conflict_qs = Product.objects.filter(slug=slug)
+                if self.pk:
+                    slug_conflict_qs = slug_conflict_qs.exclude(pk=self.pk)
             self.slug = slug
         super().save(*args, **kwargs)
-        
+
     @property
     def discount_percentage(self):
-        if self.dicount_price and self.price > 0:
-            discount = ((self.price - self.dicount_price) / self.price) * 100
+        if self.discount_price and self.price > 0:
+            discount = ((self.price - self.discount_price) / self.price) * 100
             return round(discount, 2)
         return 0.00
     
     @property
     def final_price(self):
-        return self.dicount_price if self.dicount_price else self.price
+        return self.discount_price if self.discount_price else self.price
     
     @property
     def is_in_stock(self):
