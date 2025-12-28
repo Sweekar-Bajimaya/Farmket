@@ -30,7 +30,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'seller_business_name', 'final_price', 'stock_quantity', 'status', 'is_featured', 'created_at')
     list_filter = ('category', 'status', 'is_featured', 'created_at')
-    search_fields = ('name', 'slug', 'sku', 'seller__email', 'seller__seller_profile__business_name')
+    search_fields = ('name', 'slug', 'sku', 'seller__user__email', 'seller__business_name')
     ordering = ('-created_at',)
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline]
@@ -54,21 +54,15 @@ class ProductAdmin(admin.ModelAdmin):
     )
     
     def seller_business_name(self, obj):
-        if hasattr(obj.seller, 'seller_profile'):
-            return obj.seller.business_name
         return obj.seller.business_name
     
     seller_business_name.short_description = 'Seller Business Name'
-    seller_business_name.admin_order_field = 'seller__seller_profile__business_name'  
+    seller_business_name.admin_order_field = 'seller__business_name'  
       
     def final_price(self, obj):
         return f"${obj.final_price}" 
     final_price.short_description = 'Price'
     final_price.admin_order_field = 'price'
-    
-    def get_queryset(self, request):
-        return super().get_queryset(request)
-    
     
 @admin.register(ProductImage)
 class ProductImageAdmin(admin.ModelAdmin):

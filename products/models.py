@@ -70,6 +70,7 @@ class Product(models.Model):
     
     name = models.CharField(max_length=MAX_PRODUCT_NAME_LENGTH, db_index=True)
     slug = models.SlugField(max_length=MAX_SLUG_LENGTH, unique=True, blank=True)
+    description = models.TextField(blank=True)
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
