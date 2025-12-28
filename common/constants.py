@@ -32,5 +32,43 @@ MAX_BANK_ROUTING_LENGTH = 50
 # Decimal field configurations
 RATING_MAX_DIGITS = 3
 RATING_DECIMAL_PLACES = 2
+MAX_DECIMAL_PLACES = 2
 REVENUE_MAX_DIGITS = 12
+MAX_DECIMAL_PLACES = 2
+MAX_PRICE_DIGITS = 10
 REVENUE_DECIMAL_PLACES = 2
+
+# Product Status
+STATUS_AVAILABLE = 'available'
+STATUS_OUT_OF_STOCK = 'out_of_stock'
+STATUS_DISCONTINUED = 'discontinued'
+
+PRODUCT_STATUS_CHOICES = (
+    (STATUS_AVAILABLE, 'Available'),
+    (STATUS_OUT_OF_STOCK, 'Out of Stock'),
+    (STATUS_DISCONTINUED, 'Discontinued'),
+)
+
+# Unit Types
+UNIT_KG = 'kg'
+UNIT_GRAM = 'gram'
+UNIT_PIECE = 'piece'
+UNIT_LITER = 'liter'
+UNIT_ML = 'ml'
+UNIT_DOZEN = 'dozen'
+
+UNIT_TYPE_CHOICES = (
+    (UNIT_KG, 'Kilogram'),
+    (UNIT_GRAM, 'Gram'),
+    (UNIT_PIECE, 'Piece'),
+    (UNIT_LITER, 'Liter'),
+    (UNIT_ML, 'Milliliter'),
+    (UNIT_DOZEN, 'Dozen'),
+)
+
+# Field Lengths
+MAX_PRODUCT_NAME_LENGTH = 255
+MAX_SLUG_LENGTH = 300
+MAX_SKU_LENGTH = 50
+MAX_CATEGORY_NAME_LENGTH = 100
+MAX_UNIT_LENGTH = 10
